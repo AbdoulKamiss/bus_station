@@ -80,18 +80,21 @@ RSpec.describe "Users", type: :system do
         @admin = FactoryBot.create(:user, name: 'admin', email: 'admin@example.com', password: 'password', password_confirmation: 'password', admin: true, confirmed_at: DateTime.now)
         @user = FactoryBot.create(:user, confirmed_at: DateTime.now)
       end
-      it 'only admin user is able to access to admin dashboard' do
+      it 'only admin user is able to access to admin page' do
         visit new_user_session_path
         fill_in 'Email', with: 'john@gmail.com'
         fill_in 'Mot de passe', with: '123456'
         click_on 'Se connecter'
-        expect(page).not_to have_content 'Panneau de contrôle'
+        visit users_path
+        expect(current_path).to eq root_path
         click_on 'Deconnexion'
         click_on 'Connexion'
         fill_in 'Email', with: 'admin@example.com'
         fill_in 'Mot de passe', with: 'password'
         click_on 'Se connecter'
-        expect(page).to have_content 'Panneau de contrôle'
+        visit users_path
+        sleep(2)
+        expect(current_path).to eq users_path
       end
     end
   end
